@@ -4,3 +4,7 @@ __pycache__/
 *.db
 .pytest_cache/
 scratch_hw/
+.gates/
+GATES.md
+.unlazy/
+.unlazy-hook-state.json

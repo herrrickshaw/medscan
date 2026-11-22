@@ -70,6 +70,44 @@ Found via web search; I read abstracts/snippets only, not the full papers.
 **General handwriting background**
 - [Handwritten OCR: Systematic Literature Review](https://arxiv.org/abs/2001.00139) · [Handwritten Text Recognition: A Survey (2025)](https://arxiv.org/abs/2502.08417)
 
+## More literature
+Added 2026-11-22 from a second round of searches. Again I read search-result summaries, not the full
+papers; the link checker confirms each arXiv link text is that paper's real title, nothing more.
+
+### Text recognition and document-understanding models
+- [TrOCR: Transformer-based Optical Character Recognition with Pre-trained Models](https://arxiv.org/abs/2109.10282): the line-level model behind `--engine trocr` (AAAI 2023).
+- [OCR-free Document Understanding Transformer](https://arxiv.org/abs/2111.15664): Donut, which skips the OCR step and emits structured output directly (ECCV 2022); used by one of the repos above.
+- [LayoutLM: Pre-training of Text and Layout for Document Image Understanding](https://arxiv.org/abs/1912.13318): adds 2D position to text, the basis for layout-aware form and report extraction.
+- [Document Understanding for Healthcare Referrals](https://arxiv.org/abs/2309.13184): applied document-understanding on clinical referral documents.
+
+### Vision-language models and OCR benchmarks
+- [Qwen2-VL: Enhancing Vision-Language Model's Perception of the World at Any Resolution](https://arxiv.org/abs/2409.12191)
+- [Qwen2.5-VL Technical Report](https://arxiv.org/abs/2502.13923)
+- [OCRBench v2: An Improved Benchmark for Evaluating Large Multimodal Models on Visual Text Localization and Reasoning](https://arxiv.org/abs/2501.00321): per its summary, models still err often on handwritten content.
+- [Ocean-OCR: Towards General OCR Application via a Vision-Language Model](https://arxiv.org/abs/2501.15558): includes a handwriting evaluation.
+- [PaddleOCR-VL: Boosting Multilingual Document Parsing via a 0.9B Ultra-Compact Vision-Language Model](https://arxiv.org/abs/2510.14528): small enough to run locally. Its handwriting numbers and Ocean-OCR's use different metrics, so do not compare them across papers.
+
+### Datasets (public doctor-handwriting data is scarce)
+- [RxHandBD: A Handwritten Prescription Word Image Dataset](https://data.mendeley.com/datasets/dsb5r6vskg): about 5.6k cropped handwritten words from real prescriptions; check its licence before use.
+- [Dataset for classification of handwritten and printed text in a doctor's prescription](https://ieee-dataport.org/documents/dataset-classification-handwritten-and-printed-text-doctors-prescription): useful for routing handwritten vs printed lines to the right engine; reportedly needs an IEEE DataPort account.
+- [An online cursive handwritten medical words recognition system for busy doctors in developing countries](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8897401/): about 17k samples of 480 medical terms (Scientific Reports, 2022).
+
+### Clinical medication extraction (what to do with the text once you have it)
+- [2018 n2c2 shared task on adverse drug events and medication extraction: overview](https://pmc.ncbi.nlm.nih.gov/articles/PMC7489085): drug, dosage, frequency, duration entities on discharge summaries; the standard evaluation for this step.
+- [n2c2 2018 Track 2 challenge page](https://n2c2.dbmi.hms.harvard.edu/challenge/2018-track-2-ade-medication-extraction): data is released under a data-use agreement.
+- [An ensemble of neural models for nested adverse drug events and medication extraction with subwords](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6913208/): one top participant system.
+
+### Drug-name confusion and safety
+- [Identification of Confusable Drug Names: A New Approach and Evaluation Methodology](https://aclanthology.org/C04-1137/): COLING 2004; orthographic + phonetic similarity for look-alike/sound-alike pairs; the kind of measure `difflib` lacks.
+- [Automatic Identification of Confusable Drug Names](https://doi.org/10.1016/j.artmed.2005.07.005): Kondrak & Dorr, Artificial Intelligence in Medicine 36(1), 2006; journal follow-up, where combining several similarity measures worked best.
+- [The problem of look-alike, sound-alike name errors: Drivers and solutions](https://pubmed.ncbi.nlm.nih.gov/32198938/)
+
+**Gaps the searches suggest:** I found no study that measures how OCR error rate degrades downstream
+medication-extraction accuracy, and the public benchmarks above are mostly non-Indian or non-English.
+Search summaries also mention safety objections to fuzzy matching in medication order entry; I did not
+locate the primary source, so treat that as a lead, not a citation. It is why `medscan` flags every
+inexact match instead of auto-correcting it.
+
 ## Related GitHub repos (stars as of 2026-11-22)
 | Repo | ★ | Notes |
 |---|---|---|
@@ -85,3 +123,6 @@ Found via web search; I read abstracts/snippets only, not the full papers.
 
 I have not run or audited these repos; descriptions come from GitHub metadata. A search for
 "medical prescription handwriting recognition" returned no repos.
+
+## License
+MIT, see [LICENSE](LICENSE).
