@@ -8,3 +8,5 @@ scratch_hw/
 GATES.md
 .unlazy/
 .unlazy-hook-state.json
+coverage.xml
+.coverage

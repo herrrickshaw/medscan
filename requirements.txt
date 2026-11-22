@@ -1,6 +1,7 @@
 pytesseract
 pillow>=10.1
 pytest
+pytest-cov
 # optional, for --engine trocr:
 # torch
 # transformers
