@@ -1,6 +1,7 @@
 import sqlite3
 
-from PIL import Image, ImageDraw, ImageFont
+from fonts import load_font
+from PIL import Image, ImageDraw
 
 from medscan import htr
 from medscan.cli import main
@@ -57,7 +58,7 @@ def test_extra_lexicon_file(tmp_path):
 def _page(lines, h=90):
     img = Image.new("RGB", (1200, 60 + h * len(lines)), "white")
     d = ImageDraw.Draw(img)
-    font = ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf", 40)
+    font = load_font(40)
     for i, t in enumerate(lines):
         d.text((50, 40 + h * i), t, fill="black", font=font)
     return img

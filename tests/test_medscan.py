@@ -1,6 +1,7 @@
 import sqlite3
 
-from PIL import Image, ImageDraw, ImageFont
+from fonts import load_font
+from PIL import Image, ImageDraw
 
 from medscan import db
 from medscan.cli import main
@@ -20,7 +21,7 @@ LAB = ["Patient: Ravi Kumar", "Date: 10/11/2026",
 def _img(tmp_path, name, lines):
     img = Image.new("RGB", (1600, 160 + 90 * len(lines)), "white")
     d = ImageDraw.Draw(img)
-    font = ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf", 44)
+    font = load_font(44)
     for i, t in enumerate(lines):
         d.text((60, 60 + 90 * i), t, fill="black", font=font)
     p = tmp_path / name

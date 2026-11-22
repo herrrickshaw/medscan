@@ -1,5 +1,5 @@
 pytesseract
-pillow
+pillow>=10.1
 pytest
 # optional, for --engine trocr:
 # torch
