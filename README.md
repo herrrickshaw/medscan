@@ -164,6 +164,7 @@ pre-commit run --all-files    # or run them once over the whole repo
 python -m pytest              # tests (needs the tesseract binary)
 ```
 Ruff settings live in `pyproject.toml` (line length 120, rules E/F/W/I/B/UP, target Python 3.10).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the design rules, how to add drug names, and what not to post (no patient data).
 
 ## License
 MIT, see [LICENSE](LICENSE).
