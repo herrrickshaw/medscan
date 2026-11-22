@@ -1,0 +1,6 @@
+pytesseract
+pillow
+pytest
+# optional, for --engine trocr:
+# torch
+# transformers
