@@ -58,7 +58,7 @@ Found via web search; I read abstracts/snippets only, not the full papers.
 
 **Handwritten prescriptions**
 - [Leveraging Deep Learning with Multi-Head Attention for Accurate Extraction of Medicine from Handwritten Prescriptions](https://arxiv.org/abs/2412.18199) (2024): Mask R-CNN to locate the medicine region + TrOCR; reports ~1.4% CER.
-- [MIRAGE](https://arxiv.org/abs/2410.09729) (2024): fine-tuned LLaVA/Idefics2 on Indian prescriptions; ~82% name+dosage extraction.
+- [MIRAGE](https://arxiv.org/abs/2410.09729) (2024): fine-tuned LLaVA/Idefics2 on 743,118 *simulated* medical-record images (from 1,133 Indian doctors) and reports ~82% name+dosage extraction. The data is simulated, not scanned real prescriptions, and only a 100-record subset is public (see Datasets below).
 - [Weakly supervised information extraction from inscrutable handwritten document images](https://arxiv.org/abs/2306.06823): medicine-name language model injected into recognition.
 - [Doctor's prescription recognition system, multi-language](https://arxiv.org/abs/2210.11666) (2022).
 - [ACL Industry 2023 paper on digitising prescriptions](https://aclanthology.org/2023.acl-industry.76.pdf): notes US-trained NER degrades on non-US prescription vocabulary.
@@ -109,6 +109,36 @@ medication-extraction accuracy, and the public benchmarks above are mostly non-I
 Search summaries also mention safety objections to fuzzy matching in medication order entry; I did not
 locate the primary source, so treat that as a lead, not a citation. It is why `medscan` flags every
 inexact match instead of auto-correcting it.
+
+## Datasets
+Checked against primary sources on 2026-11-22: the papers' full text (via their arXiv PDFs), the Mendeley
+Data API, the Hugging Face API and the public Kaggle pages. **Nothing was downloaded**, and none of it has
+been used to evaluate `medscan`. Real prescriptions can contain patient data, so check consent and
+de-identification before using any real clinical images. Where a Kaggle copy and a primary source both
+exist, prefer the primary one; Kaggle entries are re-uploads whose licence fields I could only partly read
+from the static page.
+
+| Dataset | What it is | Licence / access (as checked) |
+|---|---|---|
+| [RxHandBD, Mendeley Data](https://data.mendeley.com/datasets/dsb5r6vskg) (v3) | 5,578 cropped handwritten words from physical prescriptions, 512x512; two ~128 MB zips (Raw, ML). Word-level, not full pages. | CC BY 4.0 (Mendeley API). Primary source. |
+| [RxHandBD, Kaggle copy](https://www.kaggle.com/datasets/abrahametry/rxhandbd-handwritten-word-image-dataset) | Re-upload of the above. A search listing described it as 128x128, i.e. an older version than Mendeley's v3 (not confirmed on the page). | Not verified. |
+| [Doctor's Handwritten Prescription BD](https://www.kaggle.com/datasets/mamun1113/doctors-handwritten-prescription-bd-dataset) | Word crops of medicine names, listed as 4,680 words in 78 classes, Excel/CSV. Good for classifying a medicine-name crop, not for reading whole lines. | Not verified (search summaries suggest ODbL; confirm on the page). |
+| [OCR-Processed Handwritten Prescriptions](https://www.kaggle.com/datasets/nadaarfaoui/ocr-processed-handwritten-prescriptions) | OCR *text output* derived from the BD dataset above, so it carries that dataset's errors. | Apache 2.0 (read from the page). |
+| [Handwritten Medical Prescriptions Collection](https://www.kaggle.com/datasets/mehaksingal/illegible-medical-prescription-images-dataset) | Small set of whole-prescription images (listing: 129 files), good for a smoke test. | Not verified (a search listing showed MIT). |
+| [Bilingual medical prescriptions (Arabic & English)](https://www.kaggle.com/datasets/nooralzoghby/bilingual-medical-prescriptions-arabic-and-english) | Handwritten/printed prescriptions with medication, dosage and frequency annotations; the listing says it is still being expanded. | Not verified. |
+| [100 handwritten medical records, Hugging Face](https://huggingface.co/datasets/chaithanyakota/100-handwritten-medical-records) | The public 100-record subset of MIRAGE's *simulated* data, one parquet file. | CC BY-ND 4.0 (HF tag): no derivative works, which limits redistributing modified copies. |
+| [Noisy Medical Document Images (OCR)](https://www.kaggle.com/datasets/devp1866/noisy-medical-document-images-ocr) | 1,000 *synthetic* bills and discharge summaries with scan noise and JSON ground truth (per listing). No real patient data. | CC BY-SA 4.0 (read from the page). |
+| [Multi-Document Dataset for OCR, Document AI & LLM](https://www.kaggle.com/datasets/miadul/multi-document-dataset-for-ocr-document-ai-and-llm) | Synthetic documents in eight types, one of them "Medical Report", with JSON labels. | Not verified. |
+| [Complete Blood Count (CBC) Test](https://www.kaggle.com/datasets/ahmedelsayedtaha/complete-blood-count-cbc-test) | Tabular values for 500 patients (listing says transcribed from CBC images). **Values only, no images**, so not usable for OCR. | Not verified. |
+
+**Data used by the papers themselves**
+- [arXiv 2412.18199](https://arxiv.org/abs/2412.18199): about 1,000 prescriptions from 50 doctors in Pakistan, augmented to 9,920 images. The text I read has no statement that the data is released, so assume it is private.
+- [arXiv 2306.06823](https://arxiv.org/abs/2306.06823): its Table 1 lists 9,645 images from 117 doctors, about 4.5 medicines per image; no release statement found, so assume private.
+- [arXiv 2410.09729](https://arxiv.org/abs/2410.09729): large simulated set, only the 100-record subset above is public.
+
+**Gaps:** I found no public set of *real, full-page* prescriptions with line-level transcriptions, and no public
+*real lab-report scans* with ground truth; the lab-report options above are synthetic or tabular. That is the main
+obstacle to measuring `medscan` honestly beyond synthetic images.
 
 ## Related GitHub repos (stars as of 2026-11-22)
 | Repo | ★ | Notes |
