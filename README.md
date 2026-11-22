@@ -1,5 +1,7 @@
 # medscan
 
+[![tests](https://github.com/herrrickshaw/medscan/actions/workflows/ci.yml/badge.svg)](https://github.com/herrrickshaw/medscan/actions/workflows/ci.yml)
+
 Local tool that scans prescription / lab-report images and PDFs, extracts structured
 medications and lab results, and records them in SQLite. Nothing leaves your machine.
 
