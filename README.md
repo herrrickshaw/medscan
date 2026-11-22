@@ -156,5 +156,14 @@ obstacle to measuring `medscan` honestly beyond synthetic images.
 I have not run or audited these repos; descriptions come from GitHub metadata. A search for
 "medical prescription handwriting recognition" returned no repos.
 
+## Development
+```bash
+pip install -r requirements.txt pre-commit
+pre-commit install            # ruff lint + format and whitespace/YAML checks on every commit
+pre-commit run --all-files    # or run them once over the whole repo
+python -m pytest              # tests (needs the tesseract binary)
+```
+Ruff settings live in `pyproject.toml` (line length 120, rules E/F/W/I/B/UP, target Python 3.10).
+
 ## License
 MIT, see [LICENSE](LICENSE).

@@ -3,19 +3,24 @@ import sqlite3
 from fonts import load_font
 from PIL import Image, ImageDraw
 
-from medscan import db
 from medscan.cli import main
-from medscan.ocr import ocr_file
 from medscan.parse import parse_lines
 
-RX = ["Patient: Asha Rao", "Date: 12/11/2026", "Dr. Mehta",
-      "1. Tab Metformin 500 mg BD x 30 days",
-      "2. Cap Amoxicillin 250 mg TDS x 5 days",
-      "3. Tab Atorvastatin 10 mg HS"]
-LAB = ["Patient: Ravi Kumar", "Date: 10/11/2026",
-       "Hemoglobin 11.2 g/dL 13.0-17.0 L",
-       "Fasting Glucose 142 mg/dL 70-100 H",
-       "Creatinine 0.9 mg/dL 0.7-1.3"]
+RX = [
+    "Patient: Asha Rao",
+    "Date: 12/11/2026",
+    "Dr. Mehta",
+    "1. Tab Metformin 500 mg BD x 30 days",
+    "2. Cap Amoxicillin 250 mg TDS x 5 days",
+    "3. Tab Atorvastatin 10 mg HS",
+]
+LAB = [
+    "Patient: Ravi Kumar",
+    "Date: 10/11/2026",
+    "Hemoglobin 11.2 g/dL 13.0-17.0 L",
+    "Fasting Glucose 142 mg/dL 70-100 H",
+    "Creatinine 0.9 mg/dL 0.7-1.3",
+]
 
 
 def _img(tmp_path, name, lines):

@@ -3,6 +3,7 @@
 Deliberately transparent (regex + small lexicons) so every field is auditable.
 Anything uncertain is flagged `needs_review` rather than silently trusted.
 """
+
 from __future__ import annotations
 
 import re
@@ -11,11 +12,23 @@ from dataclasses import asdict, dataclass, field
 REVIEW_CONF = 70.0  # below this mean OCR confidence a row needs human review
 
 FREQ = {  # abbreviation -> plain meaning
-    "od": "once daily", "qd": "once daily", "bd": "twice daily", "bid": "twice daily",
-    "tds": "three times daily", "tid": "three times daily", "qid": "four times daily",
-    "hs": "at bedtime", "sos": "if needed", "prn": "if needed", "stat": "immediately",
-    "1-0-1": "twice daily", "1-1-1": "three times daily", "1-0-0": "morning",
-    "0-0-1": "night", "0-1-0": "afternoon", "1-1-1-1": "four times daily",
+    "od": "once daily",
+    "qd": "once daily",
+    "bd": "twice daily",
+    "bid": "twice daily",
+    "tds": "three times daily",
+    "tid": "three times daily",
+    "qid": "four times daily",
+    "hs": "at bedtime",
+    "sos": "if needed",
+    "prn": "if needed",
+    "stat": "immediately",
+    "1-0-1": "twice daily",
+    "1-1-1": "three times daily",
+    "1-0-0": "morning",
+    "0-0-1": "night",
+    "0-1-0": "afternoon",
+    "1-1-1-1": "four times daily",
 }
 FORMS = r"(?:tab(?:let)?s?|cap(?:sule)?s?|syr(?:up)?|inj(?:ection)?|oint(?:ment)?|drops?|cream|gel|susp(?:ension)?)"
 STRENGTH = r"(\d+(?:\.\d+)?)\s*(mcg|µg|mg|g|ml|iu|%)"
@@ -39,7 +52,21 @@ HEADER = {
     "date": re.compile(r"(?:date|reported|collected)\s*[:\-]\s*([0-9]{1,4}[-/.][0-9]{1,2}[-/.][0-9]{1,4})", re.I),
     "doctor": re.compile(r"(?:dr\.?|doctor|ref(?:erred)? by)\s*[:\-]?\s*([A-Za-z. ]{3,40})", re.I),
 }
-NOT_DRUG = {"patient", "name", "date", "age", "sex", "dr", "doctor", "rx", "address", "diagnosis", "test", "report", "sample"}
+NOT_DRUG = {
+    "patient",
+    "name",
+    "date",
+    "age",
+    "sex",
+    "dr",
+    "doctor",
+    "rx",
+    "address",
+    "diagnosis",
+    "test",
+    "report",
+    "sample",
+}
 
 
 @dataclass
@@ -53,9 +80,9 @@ class Medication:
     source_line: str = ""
     conf: float = 0.0
     needs_review: bool = False
-    canonical: str = ""      # lexicon match (generic name); empty if none
+    canonical: str = ""  # lexicon match (generic name); empty if none
     match_score: float = 0.0
-    alternatives: str = ""    # look-alike candidates when ambiguous
+    alternatives: str = ""  # look-alike candidates when ambiguous
 
 
 @dataclass

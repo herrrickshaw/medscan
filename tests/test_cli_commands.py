@@ -1,4 +1,5 @@
 """list / review / export commands, driven through the real CLI entry point."""
+
 import csv
 import io
 import sqlite3
@@ -12,11 +13,11 @@ from medscan.parse import parse_lines
 
 LINES = [
     ("Patient: Asha Rao", 95),
-    ("Tab Metformin 500 mg BD x 30 days", 95),       # exact lexicon hit -> no review
-    ("Tab Metforrnin 500 mg BD", 95),                # OCR typo, fuzzy match -> review
-    ("Tab Zzqxplon 5 mg OD", 95),                    # unknown to lexicon -> review
-    ("Hemoglobin 11.2 g/dL 13.0-17.0 L", 95),        # confident lab
-    ("Creatinine 0.9 mg/dL 0.7-1.3", 40),            # low OCR confidence -> review
+    ("Tab Metformin 500 mg BD x 30 days", 95),  # exact lexicon hit -> no review
+    ("Tab Metforrnin 500 mg BD", 95),  # OCR typo, fuzzy match -> review
+    ("Tab Zzqxplon 5 mg OD", 95),  # unknown to lexicon -> review
+    ("Hemoglobin 11.2 g/dL 13.0-17.0 L", 95),  # confident lab
+    ("Creatinine 0.9 mg/dL 0.7-1.3", 40),  # low OCR confidence -> review
 ]
 
 
@@ -42,16 +43,16 @@ def rows(path, sql):
 def test_list_shows_rows_canonical_and_review_marks(dbpath, capsys):
     assert main(["--db", dbpath, "list"]) == 0
     out = capsys.readouterr().out.splitlines()
-    meds = [l for l in out if "] Rx " in l]
-    labs = [l for l in out if "] Lab " in l]
+    meds = [ln for ln in out if "] Rx " in ln]
+    labs = [ln for ln in out if "] Lab " in ln]
     assert len(meds) == 3 and len(labs) == 2
-    assert not any("review" in l for l in meds if "Metformin 500" in l and "->" not in l)
-    typo = next(l for l in meds if "Metforrnin" in l)
-    assert "-> metformin" in typo and "review" in typo       # canonical shown, flagged
-    assert "review" in next(l for l in meds if "Zzqxplon" in l)
-    assert "Hemoglobin: 11.2 g/dL (13.0-17.0) L" in next(l for l in labs if "Hemoglobin" in l)
-    assert "review" not in next(l for l in labs if "Hemoglobin" in l)
-    assert "review" in next(l for l in labs if "Creatinine" in l)
+    assert not any("review" in ln for ln in meds if "Metformin 500" in ln and "->" not in ln)
+    typo = next(ln for ln in meds if "Metforrnin" in ln)
+    assert "-> metformin" in typo and "review" in typo  # canonical shown, flagged
+    assert "review" in next(ln for ln in meds if "Zzqxplon" in ln)
+    assert "Hemoglobin: 11.2 g/dL (13.0-17.0) L" in next(ln for ln in labs if "Hemoglobin" in ln)
+    assert "review" not in next(ln for ln in labs if "Hemoglobin" in ln)
+    assert "review" in next(ln for ln in labs if "Creatinine" in ln)
 
 
 def test_list_empty_database_prints_nothing(tmp_path, capsys):
@@ -75,8 +76,8 @@ def test_review_verify_delete_skip(dbpath, monkeypatch, capsys):
 
     main(["--db", dbpath, "list"])  # a verified row no longer carries the review mark
     listed = capsys.readouterr().out.splitlines()
-    assert "review" not in next(l for l in listed if "Metforrnin" in l)
-    assert "review" in next(l for l in listed if "Creatinine" in l)
+    assert "review" not in next(ln for ln in listed if "Metforrnin" in ln)
+    assert "review" in next(ln for ln in listed if "Creatinine" in ln)
 
 
 def test_review_does_not_reoffer_verified_rows(dbpath, monkeypatch):

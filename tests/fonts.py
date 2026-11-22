@@ -1,11 +1,12 @@
 """Portable font loading so the OCR tests run on macOS and Linux CI alike."""
+
 import os
 
 from PIL import ImageFont
 
 CANDIDATES = [
-    "/System/Library/Fonts/Supplemental/Arial.ttf",                    # macOS
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",                 # Debian/Ubuntu
+    "/System/Library/Fonts/Supplemental/Arial.ttf",  # macOS
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",  # Debian/Ubuntu
     "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
 ]
 

@@ -1,4 +1,5 @@
 """SQLite store. Local file only; keeps raw OCR text for audit and re-parsing."""
+
 from __future__ import annotations
 
 import hashlib
@@ -30,9 +31,13 @@ def connect(path: str | Path = "medscan.db") -> sqlite3.Connection:
     con.row_factory = sqlite3.Row
     con.executescript(SCHEMA)
     have = {r[1] for r in con.execute("PRAGMA table_info(medications)")}
-    for col, ddl in (('canonical', "TEXT DEFAULT ''"), ('match_score', 'REAL DEFAULT 0'), ('alternatives', "TEXT DEFAULT ''")):
+    for col, ddl in (
+        ("canonical", "TEXT DEFAULT ''"),
+        ("match_score", "REAL DEFAULT 0"),
+        ("alternatives", "TEXT DEFAULT ''"),
+    ):
         if col not in have:  # migrate databases created by the first version
-            con.execute(f'ALTER TABLE medications ADD COLUMN {col} {ddl}')
+            con.execute(f"ALTER TABLE medications ADD COLUMN {col} {ddl}")
     return con
 
 
@@ -49,16 +54,35 @@ def save(con: sqlite3.Connection, file: Path, raw_text: str, ex: Extraction) -> 
     )
     doc_id = cur.lastrowid
     con.executemany(
-        "INSERT INTO medications(doc_id,drug,strength,form,frequency,frequency_plain,duration,source_line,conf,needs_review,canonical,match_score,alternatives)"
+        "INSERT INTO medications(doc_id,drug,strength,form,frequency,frequency_plain,duration,"
+        "source_line,conf,needs_review,canonical,match_score,alternatives)"
         " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
-        [(doc_id, m.drug, m.strength, m.form, m.frequency, m.frequency_plain, m.duration, m.source_line, m.conf, m.needs_review, m.canonical, m.match_score, m.alternatives)
-         for m in ex.medications],
+        [
+            (
+                doc_id,
+                m.drug,
+                m.strength,
+                m.form,
+                m.frequency,
+                m.frequency_plain,
+                m.duration,
+                m.source_line,
+                m.conf,
+                m.needs_review,
+                m.canonical,
+                m.match_score,
+                m.alternatives,
+            )
+            for m in ex.medications
+        ],
     )
     con.executemany(
         "INSERT INTO lab_results(doc_id,test,value,unit,ref_low,ref_high,flag,source_line,conf,needs_review)"
         " VALUES(?,?,?,?,?,?,?,?,?,?)",
-        [(doc_id, r.test, r.value, r.unit, r.ref_low, r.ref_high, r.flag, r.source_line, r.conf, r.needs_review)
-         for r in ex.labs],
+        [
+            (doc_id, r.test, r.value, r.unit, r.ref_low, r.ref_high, r.flag, r.source_line, r.conf, r.needs_review)
+            for r in ex.labs
+        ],
     )
     con.commit()
     return doc_id, True

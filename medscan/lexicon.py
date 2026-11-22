@@ -4,6 +4,7 @@ OCR output is never silently "corrected": the original text is kept, the best
 canonical candidate and its score are recorded, and look-alike pairs
 (e.g. hydroxyzine / hydralazine) are marked ambiguous so a human decides.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -11,8 +12,8 @@ from difflib import SequenceMatcher
 from pathlib import Path
 
 DEFAULT_PATH = Path(__file__).parent / "data" / "drugs.txt"
-MIN_SCORE = 0.80      # below this: no candidate offered
-CONFIDENT = 1.0       # only an exact lexicon hit skips review; any fuzzy match is flagged
+MIN_SCORE = 0.80  # below this: no candidate offered
+CONFIDENT = 1.0  # only an exact lexicon hit skips review; any fuzzy match is flagged
 AMBIGUITY_GAP = 0.06  # runner-up within this of the winner => ambiguous
 
 
@@ -33,7 +34,7 @@ class Lexicon:
         self.entries = entries  # lowercase surface form -> canonical generic
 
     @classmethod
-    def load(cls, *extra: str | Path) -> "Lexicon":
+    def load(cls, *extra: str | Path) -> Lexicon:
         entries: dict[str, str] = {}
         for p in (DEFAULT_PATH, *map(Path, extra)):
             for raw in Path(p).read_text().splitlines():

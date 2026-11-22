@@ -4,7 +4,6 @@ from fonts import load_font
 from PIL import Image, ImageDraw
 
 from medscan import htr
-from medscan.cli import main
 from medscan.lexicon import Lexicon
 from medscan.ocr import ocr_file
 from medscan.parse import parse_lines
@@ -42,8 +41,9 @@ def test_unknown_word_returns_none():
 
 
 def test_parser_never_overwrites_ocr_text_and_flags_review():
-    ex = parse_lines([("Tab Metforrnin 500 mg BD", 95), ("Tab Zzqxplon 5 mg OD", 95),
-                      ("Tab Metformin 500 mg BD", 95)], LEX)
+    ex = parse_lines(
+        [("Tab Metforrnin 500 mg BD", 95), ("Tab Zzqxplon 5 mg OD", 95), ("Tab Metformin 500 mg BD", 95)], LEX
+    )
     typo, unknown, exact = ex.medications
     assert typo.drug == "Metforrnin" and typo.canonical == "metformin" and typo.needs_review
     assert unknown.canonical == "" and unknown.needs_review
@@ -51,7 +51,8 @@ def test_parser_never_overwrites_ocr_text_and_flags_review():
 
 
 def test_extra_lexicon_file(tmp_path):
-    f = tmp_path / "x.txt"; f.write_text("# custom\nzzqxplon\n")
+    f = tmp_path / "x.txt"
+    f.write_text("# custom\nzzqxplon\n")
     assert Lexicon.load(f).match("Zzqxplon").canonical == "zzqxplon"
 
 
@@ -71,19 +72,25 @@ def test_segment_lines_finds_each_line():
 
 def test_trocr_engine_wiring_with_fake_recogniser(tmp_path):
     """Real TrOCR weights are not exercised here - only segmentation -> parser -> DB plumbing."""
-    p = tmp_path / "hw.png"; _page(["Tab Metformin", "Cap Amoxicillin"]).save(p)
+    p = tmp_path / "hw.png"
+    _page(["Tab Metformin", "Cap Amoxicillin"]).save(p)
     script = iter([("Tab Metformin 500 mg BD", 88.0), ("Cap Amoxicillin 250 mg TDS", 91.0)])
     lines = ocr_file(p, engine="trocr", recogniser=lambda strip: next(script))
-    assert [l.text for l in lines] == ["Tab Metformin 500 mg BD", "Cap Amoxicillin 250 mg TDS"]
+    assert [ln.text for ln in lines] == ["Tab Metformin 500 mg BD", "Cap Amoxicillin 250 mg TDS"]
     assert lines[0].conf == 88.0
 
 
 def test_db_migration_from_v1(tmp_path):
     dbp = tmp_path / "old.db"
     con = sqlite3.connect(dbp)
-    con.execute("CREATE TABLE medications(id INTEGER PRIMARY KEY, doc_id INTEGER, drug TEXT, strength TEXT, form TEXT,"
-                " frequency TEXT, frequency_plain TEXT, duration TEXT, source_line TEXT, conf REAL, needs_review INTEGER, verified INTEGER DEFAULT 0)")
-    con.commit(); con.close()
+    con.execute(
+        "CREATE TABLE medications(id INTEGER PRIMARY KEY, doc_id INTEGER, drug TEXT, strength TEXT, form TEXT,"
+        " frequency TEXT, frequency_plain TEXT, duration TEXT, source_line TEXT, conf REAL,"
+        " needs_review INTEGER, verified INTEGER DEFAULT 0)"
+    )
+    con.commit()
+    con.close()
     from medscan import db
+
     cols = {r[1] for r in db.connect(dbp).execute("PRAGMA table_info(medications)")}
     assert {"canonical", "match_score", "alternatives"} <= cols

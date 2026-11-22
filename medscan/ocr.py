@@ -1,4 +1,5 @@
 """OCR layer: image/PDF -> text with per-line confidence (local Tesseract only)."""
+
 from __future__ import annotations
 
 import subprocess
@@ -35,12 +36,14 @@ def _page_images(path: Path) -> list[Image.Image]:
     return [Image.open(path)]
 
 
-def ocr_file(path: str | Path, lang: str = "eng", engine: str = "tesseract", model: str | None = None,
-             recogniser=None) -> list[OcrLine]:
+def ocr_file(
+    path: str | Path, lang: str = "eng", engine: str = "tesseract", model: str | None = None, recogniser=None
+) -> list[OcrLine]:
     """engine: "tesseract" (printed text) or "trocr" (handwriting; needs torch+transformers)."""
     lines: list[OcrLine] = []
     if engine == "trocr":
         from . import htr
+
         recogniser = recogniser or htr.load_trocr(model or htr.DEFAULT_MODEL)
     elif engine != "tesseract":
         raise ValueError(f"unknown engine {engine!r}")
@@ -57,7 +60,5 @@ def ocr_file(path: str | Path, lang: str = "eng", engine: str = "tesseract", mod
                 key = (data["block_num"][i], data["par_num"][i], data["line_num"][i])
                 grouped.setdefault(key, []).append((word, float(data["conf"][i])))
         for words in grouped.values():
-            lines.append(
-                OcrLine(" ".join(w for w, _ in words), sum(c for _, c in words) / len(words), page_no)
-            )
+            lines.append(OcrLine(" ".join(w for w, _ in words), sum(c for _, c in words) / len(words), page_no))
     return lines

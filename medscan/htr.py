@@ -5,10 +5,11 @@ TrOCR is a line-level model, so the page is first cut into text-line strips.
 Weights are downloaded from the Hugging Face Hub on first use (several hundred MB
 to ~1.3 GB depending on the model) and cached locally; nothing is uploaded.
 """
+
 from __future__ import annotations
 
 import math
-from typing import Callable
+from collections.abc import Callable
 
 from PIL import Image, ImageOps
 
@@ -17,8 +18,9 @@ from .ocr import OcrLine
 DEFAULT_MODEL = "microsoft/trocr-base-handwritten"
 
 
-def segment_lines(img: Image.Image, ink_threshold: int = 140, min_height: int = 12,
-                  max_gap: int = 6, pad: int = 8) -> list[Image.Image]:
+def segment_lines(
+    img: Image.Image, ink_threshold: int = 140, min_height: int = 12, max_gap: int = 6, pad: int = 8
+) -> list[Image.Image]:
     """Cut a page into horizontal text-line strips using a row ink profile."""
     gray = ImageOps.autocontrast(img.convert("L"))
     ink = gray.point(lambda p: 255 if p < ink_threshold else 0)
@@ -32,7 +34,8 @@ def segment_lines(img: Image.Image, ink_threshold: int = 140, min_height: int = 
         elif start is not None:
             gap += 1
             if gap > max_gap:
-                bands.append((start, end)); start = None
+                bands.append((start, end))
+                start = None
     if start is not None:
         bands.append((start, end))
     strips = []
