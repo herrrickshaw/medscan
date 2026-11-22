@@ -4,6 +4,8 @@ Thanks for helping. `medscan` reads prescriptions and lab reports into a local S
 a wrong value can mislead a person. Correctness and honest uncertainty matter more than coverage of
 features. It is **not a medical device**, and everything it extracts needs human review.
 
+Everyone taking part is expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## Never post patient data
 
 Do not put real prescriptions, lab reports, names, or any other patient information in issues, pull
